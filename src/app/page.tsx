@@ -381,11 +381,12 @@ function LoveLetter({ c }) {
     "",
     "At MOA, among thousands of strangers and the salt-kissed bay breeze,",
     "I found someone whose presence made the whole world softer.",
+    "The way my eye stuck always at you, it is because right from I saw you I knew and I feel there is something in it.",
     "The way you push your glasses up. The purple in everything you choose.",
     "The bracelets that catch the light like tiny constellations.",
     "",
     "Tomorrow we walk through a world made of light and art.",
-    "Next week, we'll reach for the stars together at Star City.",
+    "Next week, we'll even enjoy together at Star City.",
     "But honestly? Any day with you already feels like the best one.",
     "",
     "Happy Birthday, my Ayouni.",
@@ -409,7 +410,7 @@ function LoveLetter({ c }) {
           system: "You write the most beautiful, intimate, poetic love letters. Short, deeply personal, 3-5 sentences. No clichés.",
           messages: [{
             role: "user",
-            content: "Write a short poetic birthday love letter for Ashley (Ayouni). She loves purple, wears glasses, collects bracelets. We first met at Mall of Asia, second time at Robinson. Tomorrow a digital museum, next week Star City. Make it feel like a love letter that was written, raw and tender and real.",
+            content: "Write a short poetic birthday love letter for Ayouni. She loves purple, wears glasses, collects bracelets. We first met at Mall of Asia, second time at Robinson. Tomorrow a digital museum, next week Star City. Make it feel like a love letter that was written, raw and tender and real.",
           }]
         })
       });
@@ -533,7 +534,7 @@ function AIPoem({ c }) {
           system: "You are a poet. Write short, exquisite, contemporary poetry. 12-16 lines. No rhyme forced. Deeply emotional and specific.",
           messages: [{
             role: "user",
-            content: "Write a birthday poem for Ashley (Ayouni). She loves purple, wears glasses, loves bracelets. Met at Mall of Asia, Robinson. Going to a digital museum and Star City. She is everything tender and bright. Make it feel like finding a rare flower pressed in an old book.",
+            content: "Write a birthday poem for Ayouni. She loves purple, wears glasses, loves bracelets. Met at Mall of Asia, Robinson. Going to a digital museum and Star City. She is everything tender and bright. Make it feel like finding a rare flower pressed in an old book.",
           }]
         })
       });
@@ -750,9 +751,9 @@ function PersonalityWheel({ c }) {
   const traits = [
     { label: "Aesthetic Soul", icon: <Palette size={22} />, desc: "You see beauty where others see ordinary. Purple isn't just a color — it's a language.", color: c.accent },
     { label: "Detail Keeper", icon: <Watch size={22} />, desc: "Each bracelet, each choice — intentional, layered, meaningful.", color: c.rose },
-    { label: "Curious Mind", icon: <Globe size={22} />, desc: "Digital museums, Star City — chase wonder in every form it takes.", color: c.cyan },
+    { label: "Curious Mind", icon: <Globe size={22} />, desc: "Digital museums, Star City — soon, g ka lng ng g sa gala I love it.", color: c.cyan },
     { label: "Gentle Strength", icon: <Wind size={22} />, desc: "You carry warmth without overpowering. Your presence is like the right song at the right moment.", color: c.gold },
-    { label: "Timeless Charm", icon: <Sparkles size={22} />, desc: "The glasses. The style. The way you exist in a room. It's effortless and unforgettable.", color: `${c.accent}cc` },
+    { label: "Timeless Charm", icon: <Sparkles size={22} />, desc: "The glasses. The style. The way you exist in a room. It's effortless and unforgettable. And also the way you maximize the time you spent with me.", color: `${c.accent}cc` },
     { label: "Adventurer", icon: <Zap size={22} />, desc: "From MOA to digital art to Star City — I am ready to be hear everyday for a life time writing endless chapter and happy memories with open eyes.", color: c.rose },
   ];
 
@@ -802,10 +803,10 @@ function AdventureMap({ c }) {
   const events = [
     { label: "Mall of Asia", sub: "Where it all started — salt air and serendipity", icon: "🌊", done: true, special: true },
     { label: "Robinson", sub: "Second chapter, same magic", icon: "🏙️", done: true },
-    { label: "Digital Museum", sub: "Tomorrow — walking inside art", icon: "🎨", done: false, soon: true },
+    { label: "Digital Museum", sub: "Tomorrow — walking inside digital art. I really hope you enjoy it.", icon: "🎨", done: false, soon: true },
     { label: "Star City", sub: "Next week — the sky is not the limit", icon: "🎢", done: false, soon: true },
     { label: "Chapter 5…", sub: "Still being written, together", icon: "💜", done: false },
-    { label: "Chapter 6…", sub: "Every day a new page", icon: "✨", done: false },
+    { label: "Chapter 6…", sub: "Enedless po chapter natin", icon: "✨", done: false },
   ];
 
   return (
@@ -858,14 +859,14 @@ function LoveLanguageSection({ c }) {
           system: "You write deeply personal, warm, insightful messages. No generic phrases. Be poetic and specific.",
           messages: [{
             role: "user",
-            content: "Write a heartfelt message about what kind of love Ashley (Ayouni) deserves and radiates. She loves purple, wears glasses, loves bracelets. She's the kind of person who finds beauty in details. She's curious, adventurous (digital museum, Star City), and tender. Keep it under 100 words, poetic, warm, like something said at golden hour.",
+            content: "Write a heartfelt message about what kind of love Ayouni deserves and radiates. She loves purple, wears glasses, loves bracelets. She's the kind of person who finds beauty in details. She's curious, adventurous (digital museum, Star City), and tender. Keep it under 100 words, poetic, warm, like something said at golden hour.",
           }]
         })
       });
       const data = await res.json();
       setResult(data.content?.find(b => b.type === "text")?.text || "You deserve the kind of love that notices the small things — the way your glasses catch the light, the story behind each bracelet, the purple you choose every time. A love that shows up with adventures and stays for the quiet evenings. That's what you are, Ayouni. And that's exactly what you deserve. 💜");
     } catch {
-      setResult("You deserve the kind of love that notices the small things. A love that shows up with adventures. That's what you are, Ayouni. 💜");
+      setResult("You deserve the kind of love that notices the small things. A love that efforts never fades. That's what you are someone who deserve all of what I have, Ayouni. 💜");
     }
     setLoading(false);
     setDone(true);
@@ -1153,8 +1154,8 @@ export default function BirthdayPage() {
             background: `linear-gradient(135deg, ${c.text} 0%, ${c.accent} 45%, ${c.rose} 75%, #f0abfc 100%)`,
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
           }}>
-          Ashley<br />
-          <span style={{ fontStyle: "italic", fontSize: "0.82em", fontWeight: 600 }}>Tecson Gallo</span>
+          Ayouni<br />
+          <span style={{ fontStyle: "italic", fontSize: "0.82em", fontWeight: 600 }}>Ayouni</span>
         </motion.h1>
 
         {/* Ayouni */}
@@ -1173,7 +1174,7 @@ export default function BirthdayPage() {
         {/* Tagline */}
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 1 }}
           style={{ maxWidth: 540, fontSize: "clamp(13px, 2vw, 15px)", lineHeight: 1.9, color: c.textSub, fontFamily: "'DM Mono', monospace", margin: "0 auto 40px" }}>
-          From the first hello at MOA to the adventures still waiting for us —<br />every chapter with you is my favorite one yet.
+          From the first hello at MOA and to the endless future <br />every chapter with you is my favorite ko talaga. I love you more than you know.
         </motion.p>
 
         {/* Scroll cue */}
@@ -1253,7 +1254,7 @@ export default function BirthdayPage() {
             { title: "Star City", sub: "Next week • Stars await", icon: <Star size={30} />, color: c.rose },
             { title: "More dates…", sub: "Every day • New adventures", icon: <Infinity size={30} />, color: c.cyan },
             { title: "Late night talks", sub: "Always • Our favorite thing", icon: <Moon size={30} />, color: c.gold },
-            { title: "Random adventures", sub: "Anytime • Just say the word", icon: <Zap size={30} />, color: c.accentSoft },
+            { title: "Random adventures", sub: "Endless • Our similarities", icon: <Zap size={30} />, color: c.accentSoft },
           ].map((plan, i) => (
             <motion.div key={i}
               initial={{ opacity: 0, scale: 0.85 }}
@@ -1297,7 +1298,7 @@ export default function BirthdayPage() {
           Happy Birthday, <motion.span animate={{ color: [c.accent, c.rose, c.accent] }} transition={{ duration: 4, repeat: Infinity }} style={{ color: c.accent }}>Ayouni</motion.span>
         </p>
         <p style={{ fontSize: 11, color: `${c.textMuted}99`, fontFamily: "'DM Mono', monospace", letterSpacing: "0.14em", margin: "0 0 28px" }}>
-          Made with purple love · Ashley Tecson Gallo ✦ 2025
+          Made with purple love · Ayouni ✦ 2026
         </p>
         <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
           {["purple", "glasses", "bracelets", "ayouni", "MOA", "adventures"].map((tag, i) => (

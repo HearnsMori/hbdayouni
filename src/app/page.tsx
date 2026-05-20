@@ -12,7 +12,8 @@ import {
   Zap, Coffee, BookOpen, Palette, Smile, Wind, Feather,
   Clock, Globe, Mail, MessageCircle, Infinity
 } from "lucide-react";
-
+import coreApi from "@/utils/coreApi"
+import { form } from "framer-motion/client";
 // ─────────────────────────────────────────────────────────────────────────────
 // DESIGN TOKENS (Purple Luxury — deep violet night sky meets morning rose)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -211,23 +212,57 @@ function FireworksCanvas({ active, c }) {
     const loop = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.current = particles.current.filter(p => p.life > 0);
-      particles.current.forEach(p => {
+
+
+      particles.current.forEach((p) => {
         p.tail.push({ x: p.x, y: p.y });
+
         if (p.tail.length > 6) p.tail.shift();
+
         p.x += p.vx;
         p.y += p.vy;
+
         p.vy += 0.12;
         p.vx *= 0.98;
+
         p.life -= p.decay;
+
+        // remove dead particles
+        if (p.life <= 0) return;
+
         p.tail.forEach((t, i) => {
+          const tailRadius = Math.max(
+            0,
+            p.size * (i / p.tail.length) * 0.7 * p.life
+          );
+
+          if (tailRadius <= 0) return;
+
           ctx.beginPath();
-          ctx.arc(t.x, t.y, p.size * (i / p.tail.length) * 0.7, 0, Math.PI * 2);
-          ctx.fillStyle = p.color + Math.floor(p.life * (i / p.tail.length) * 255).toString(16).padStart(2, "0");
+          ctx.arc(t.x, t.y, tailRadius, 0, Math.PI * 2);
+
+          ctx.fillStyle =
+            p.color +
+            Math.floor(p.life * (i / p.tail.length) * 255)
+              .toString(16)
+              .padStart(2, "0");
+
           ctx.fill();
         });
+
+        const radius = Math.max(0, p.size * p.life);
+
+        if (radius <= 0) return;
+
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + Math.floor(p.life * 255).toString(16).padStart(2, "0");
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+
+        ctx.fillStyle =
+          p.color +
+          Math.floor(p.life * 255)
+            .toString(16)
+            .padStart(2, "0");
+
         ctx.fill();
       });
       animRef.current = requestAnimationFrame(loop);
@@ -374,7 +409,7 @@ function LoveLetter({ c }) {
           system: "You write the most beautiful, intimate, poetic love letters. Short, deeply personal, 3-5 sentences. No clichés.",
           messages: [{
             role: "user",
-            content: "Write a short poetic birthday love letter for Ashley (Ayouni). She loves purple, wears glasses, collects bracelets. We first met at Mall of Asia, second time at Robinson. Tomorrow a digital museum, next week Star City. Make it feel like a love letter that was written at 3am, raw and tender and real.",
+            content: "Write a short poetic birthday love letter for Ashley (Ayouni). She loves purple, wears glasses, collects bracelets. We first met at Mall of Asia, second time at Robinson. Tomorrow a digital museum, next week Star City. Make it feel like a love letter that was written, raw and tender and real.",
           }]
         })
       });
@@ -466,7 +501,7 @@ function LoveLetter({ c }) {
             <div style={{ marginTop: 24, borderTop: `1px solid ${c.border}`, paddingTop: 16, display: "flex", alignItems: "center", gap: 8 }}>
               <Heart size={14} fill={c.rose} style={{ color: c.rose }} />
               <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: c.textMuted, letterSpacing: "0.12em" }}>
-                written at 3am, for you
+                written, for you
               </span>
             </div>
           </motion.div>
@@ -580,22 +615,11 @@ function AIPoem({ c }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // WISH JAR (with storage)
 // ─────────────────────────────────────────────────────────────────────────────
-function WishJar({ c }) {
-  const [wishes, setWishes] = useState([]);
+function WishJar({ c, wishes }) {
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
-  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await window.storage.get("birthday_wishes_ashley_v2");
-        if (res?.value) setWishes(JSON.parse(res.value));
-      } catch { }
-      setLoaded(true);
-    })();
-  }, []);
 
   const submit = async () => {
     const trimmed = input.trim();
@@ -604,17 +628,18 @@ function WishJar({ c }) {
     const newWish = { text: trimmed, from: name.trim() || "Anonymous", time: new Date().toISOString() };
     const updated = [...wishes, newWish];
     try {
-      await window.storage.set("birthday_wishes_ashley_v2", JSON.stringify(updated));
+      await coreApi.setData(name.trim(), "birthday_wishes_ashley_v2", { value: JSON.stringify(updated) });
       setWishes(updated);
       setInput("");
       setName("");
-    } catch {
+      coreApi.alert("Success", "#7E7")
+    } catch (err) {
       setWishes(updated);
       setInput("");
       setName("");
     }
     setSaving(false);
-  };
+  }
 
   const icons = ["💜", "🌸", "✨", "🌙", "⭐", "🌺", "🦋", "💫", "🌹", "🎊"];
 
@@ -639,7 +664,7 @@ function WishJar({ c }) {
           onFocus={e => e.target.style.borderColor = c.accent}
           onBlur={e => e.target.style.borderColor = c.border}
         />
-        <div style={{ display: "flex", gap: 10 }}>
+        <div style={{ display: "flex", flexFlow: "column", gap: 10 }}>
           <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && submit()} placeholder="Write your birthday wish…"
             style={{ flex: 1, background: `${c.accent}10`, border: `1.5px solid ${c.border}`, borderRadius: 14, padding: "12px 18px", fontSize: 14, color: c.text, fontFamily: "'DM Mono', monospace", outline: "none", transition: "border 0.2s" }}
             onFocus={e => e.target.style.borderColor = c.accent}
@@ -652,7 +677,7 @@ function WishJar({ c }) {
         </div>
       </div>
 
-      {loaded && wishes.length > 0 && (
+      {wishes.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 10, maxHeight: 280, overflowY: "auto", paddingRight: 4 }}>
           {wishes.map((w, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
@@ -667,7 +692,7 @@ function WishJar({ c }) {
         </div>
       )}
 
-      {loaded && wishes.length === 0 && (
+      {wishes.length === 0 && (
         <div style={{ textAlign: "center", padding: 24, color: c.textMuted, fontFamily: "'DM Mono', monospace", fontSize: 12, letterSpacing: "0.08em" }}>
           Be the first to leave a wish for Ayouni ✦
         </div>
@@ -725,10 +750,10 @@ function PersonalityWheel({ c }) {
   const traits = [
     { label: "Aesthetic Soul", icon: <Palette size={22} />, desc: "You see beauty where others see ordinary. Purple isn't just a color — it's a language.", color: c.accent },
     { label: "Detail Keeper", icon: <Watch size={22} />, desc: "Each bracelet, each choice — intentional, layered, meaningful.", color: c.rose },
-    { label: "Curious Mind", icon: <Globe size={22} />, desc: "Digital museums, Star City — you chase wonder in every form it takes.", color: c.cyan },
+    { label: "Curious Mind", icon: <Globe size={22} />, desc: "Digital museums, Star City — chase wonder in every form it takes.", color: c.cyan },
     { label: "Gentle Strength", icon: <Wind size={22} />, desc: "You carry warmth without overpowering. Your presence is like the right song at the right moment.", color: c.gold },
     { label: "Timeless Charm", icon: <Sparkles size={22} />, desc: "The glasses. The style. The way you exist in a room. It's effortless and unforgettable.", color: `${c.accent}cc` },
-    { label: "Adventurer", icon: <Zap size={22} />, desc: "From MOA to digital art to Star City — you embrace every new chapter with open eyes.", color: c.rose },
+    { label: "Adventurer", icon: <Zap size={22} />, desc: "From MOA to digital art to Star City — I am ready to be hear everyday for a life time writing endless chapter and happy memories with open eyes.", color: c.rose },
   ];
 
   return (
@@ -996,6 +1021,7 @@ function Divider({ c }) {
 // MAIN PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 export default function BirthdayPage() {
+  const [wishes, setWishes] = useState([]);
   const [isLight, setIsLight] = useState(false);
   const c = isLight ? LIGHT : DARK;
   const [fireworks, setFireworks] = useState(false);
@@ -1006,6 +1032,26 @@ export default function BirthdayPage() {
   const spotY = useSpring(mouseY, { stiffness: 50, damping: 15 });
 
   useEffect(() => {
+    (async () => {
+      try {
+        if (!coreApi.isLogin()) {
+          try {
+            await coreApi.signup("magic", "magic");
+            await coreApi.login("magic", "magic");
+          } catch {
+            try {
+              await coreApi.login("magic", "magic");
+            } catch (e) {
+            }
+          }
+        }
+        const res = await coreApi.getData("#null", "birthday_wishes_ashley_v2", ["value"]);
+        if (res[0]?.value) setWishes(JSON.parse(res[0].value));
+      } catch (err) { coreApi.alert(err.toString() || "Please Refresh. Error. ", "#E77") }
+    })();
+  }, []);
+
+  useEffect(() => {
     const timer = setTimeout(() => setFireworks(true), 1500);
     const timer2 = setTimeout(() => setFireworks(false), 6000);
     const scrollHandler = () => setShowScroll(window.scrollY < 80);
@@ -1014,8 +1060,8 @@ export default function BirthdayPage() {
   }, []);
 
   const memories = [
-    { id: 1, place: "Mall of Asia", description: "Our story began here — somewhere between the bay breeze and a thousand strangers, I found you. First impressions became first memories that I keep returning to.", icon: <MapPin size={24} />, color: c.accent, date: "First meeting" },
-    { id: 2, place: "Robinson", description: "The second chapter. Every great story needs a second act, and ours unfolded under familiar lights, finding deeper comfort in each other's presence.", icon: <Star size={24} />, color: c.rose, date: "Second meeting" },
+    { id: 1, place: "Mall of Asia", description: "Our story began here lagi ako nastustuck sa mata mo. First impressions became first memories that I keep returning lagi.", icon: <MapPin size={24} />, color: c.accent, date: "First meeting" },
+    { id: 2, place: "Robinson", description: "The second chapter natin, hirap mo hanapin non T-T. Every great story needs a second act, and ours unfolded under familiar lights, finding deeper comfort in each other's presence.", icon: <Star size={24} />, color: c.rose, date: "Second meeting" },
   ];
 
   return (
@@ -1146,7 +1192,7 @@ export default function BirthdayPage() {
 
       {/* ── COUNTDOWN ── */}
       <Section label="TIME IS A GIFT" title="Her next birthday…" c={c}>
-        <BirthdayClock c={c} birthdayDate="2026-05-20" />
+        <BirthdayClock c={c} birthdayDate="2026-05-21" />
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
           style={{ textAlign: "center", marginTop: 32, fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(16px, 2.5vw, 20px)", fontStyle: "italic", color: c.textSub }}>
           Every second with you is already a celebration
@@ -1237,7 +1283,7 @@ export default function BirthdayPage() {
 
       {/* ── WISH JAR ── */}
       <Section label="COMMUNITY LOVE" title="Leave a wish for Ayouni" c={c}>
-        <WishJar c={c} />
+        <WishJar c={c} wishes={wishes} />
       </Section>
 
       {/* ── FOOTER ── */}
